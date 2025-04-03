@@ -1,3 +1,5 @@
-Datasets/
-Datasets/
-Datasets/
+dataset/  
+*.jpg  
+*.png  
+*.jpeg  
+*.zip  
