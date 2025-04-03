@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handwriting Recognition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: white;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: #1e1e2f;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.5);
+            padding: 30px;
+            text-align: center;
+        }
+
+        .container h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .container p {
+            color: #bbbbbb;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .upload-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 300px;
+            padding: 15px;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-label:hover {
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+        }
+
+        .submit-button {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #ff512f, #dd2476);
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-button:hover {
+            background: linear-gradient(135deg, #dd2476, #ff512f);
+        }
+
+        .result-card {
+            margin-top: 20px;
+            text-align: center;
+            background: #29293d;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .result-box {
+            margin-top: 10px;
+            padding: 15px;
+            background: #1e1e2f;
+            color: #ffffff;
+            border: 1px solid #6a11cb;
+            border-radius: 8px;
+        }
+
+        .restart-button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .restart-button:hover {
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖋️ Handwriting to Text</h1>
+        <p>Upload your handwritten image and convert it to text instantly!</p>
+
+        <form id="upload-form">
+            <label for="file" class="upload-label">
+                📂 Choose a Handwritten Image
+                <input type="file" id="file" name="file" accept="image/*" hidden required>
+            </label>
+            <button type="submit" class="submit-button">Convert to Text</button>
+        </form>
+
+        <div id="result" class="hidden">
+            <div class="result-card">
+                <h2>✨ Conversion Complete!</h2>
+                <p>Your handwritten text is:</p>
+                <div class="result-box">
+                    <p id="output-text"></p>
+                </div>
+                <button class="restart-button" onclick="restartProcess()">Try Another Image</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById("upload-form");
+        const resultDiv = document.getElementById("result");
+        const outputText = document.getElementById("output-text");
+
+        form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            resultDiv.classList.add("hidden");
+
+            const fileInput = document.getElementById("file");
+            const formData = new FormData();
+            formData.append("file", fileInput.files[0]);
+
+            try {
+                const response = await fetch("/upload", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const result = await response.json();
+
+                if (result.error) {
+                    outputText.innerText = `❌ Error: ${result.error}`;
+                } else {
+                    outputText.innerText = result.text;
+                }
+
+                resultDiv.classList.remove("hidden");
+            } catch (error) {
+                resultDiv.classList.remove("hidden");
+                outputText.innerText = `❌ Error: ${error.message}`;
+            }
+        });
+
+        function restartProcess() {
+            form.reset();
+            resultDiv.classList.add("hidden");
+        }
+    </script>
+</body>
+</html>
