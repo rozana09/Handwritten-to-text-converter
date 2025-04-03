@@ -1,5 +1,12 @@
-dataset/  
-*.jpg  
-*.png  
-*.jpeg  
-*.zip  
+# Ignore dataset folder
+Datasets/
+
+# Ignore virtual environment
+venv/
+
+# Ignore unnecessary system files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.DS_Store
